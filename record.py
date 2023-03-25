@@ -1,12 +1,17 @@
 import struct
 from pvrecorder import PvRecorder
 import msvcrt, wave, time
+from translator import Translator
+from utils.utils import to_path
 
 class Record:
-    def __init__(self, path, record_time):
+    def __init__(self, path, record_time, language, game):
         self.path = path
         self.record_time = record_time
+        self.language = language
+        self.game = game
         self.options = PvRecorder.get_audio_devices()
+        self.translator = Translator(to_path("words.txt"), to_path("Output/output.wav"), self.language)
         self.recorder = None
         self.audio = []
     
@@ -28,11 +33,13 @@ class Record:
                         f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                         f.writeframes(struct.pack('h' * len(self.audio), *self.audio))
                         self.audio.clear()
+                    self.translator.set_audio()
                     time.sleep(0.01)
         except KeyboardInterrupt:
             with wave.open(self.path + "output.wav", 'w') as f:
                 f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
                 f.writeframes(struct.pack('h' * len(self.audio), *self.audio))
+            self.translator.set_audio()
         finally:
             self.recorder.stop()
             self.recorder.delete()

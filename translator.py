@@ -13,7 +13,7 @@ class Translator:
         try:
             file = sr.AudioFile(self.audio)
             with file as source:
-                record = self.recognizer.record(source)
+                record = self.recognizer.record(source, duration=3)
                 print(self.recognizer.recognize_google(record, language=self.language))
 
         except Exception as err:

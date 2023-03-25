@@ -1,24 +1,14 @@
 from record import Record
 from translator import Translator
-import pathlib
-
-def to_path(file):
-    return str(pathlib.Path(__file__).parent.resolve()) + "\\" + file
-
+from utils.utils import to_path
 class STT:
     def __init__(self, language, game):
         self.language = language
         self.game = game
 
-        self.translator = Translator(to_path("words.txt"), to_path("Output/OSR_us_000_0010_8k.wav"), self.language)
-        self.translator.set_audio()
-
-        # self.record = Record(to_path("Output/"), 3)
-        # self.record.set_recorder()
-        # self.record.recording()
-
-        def get_in_translate(self):
-            return self.translator
+        self.record = Record(to_path("Output/"), 3, self.language, self.game)
+        self.record.set_recorder()
+        self.record.recording()
 
 if __name__=="__main__":
     s = STT("en-US", "Hangman")
