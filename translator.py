@@ -1,4 +1,4 @@
-import re
+import re, sys
 import speech_recognition as sr
 
 class Translator:
@@ -13,11 +13,16 @@ class Translator:
         try:
             file = sr.AudioFile(self.audio)
             with file as source:
-                record = self.recognizer.record(source, duration=3)
-                print(self.recognizer.recognize_google(record, language=self.language))
-
+                record = self.recognizer.record(source)
+                self.seek_words(self.recognizer.recognize_google(record, language=self.language))
+        except sr.RequestError:
+            # API was unreachable or unresponsive
+            print("API unreachable or unresponsive.", file=sys.stderr)
+        except sr.UnknownValueError:
+            # If nothing was found
+            return
         except Exception as err:
-            print(f"Something went wrong when getting the audio: {str(err)}")
+            print(f"Something went wrong when getting the audio: {str(err)}", file=sys.stderr)
             #raise Exception("File doest not exist or is empty !")
 
     def set_words(self, path):
