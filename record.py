@@ -13,6 +13,7 @@ class Record:
     def recording(self):
         try:
             self.recorder.start()
+            print("Start recording... (Press Ctrl+C to stop recording")
 
             frames_per_second = 16000 / 512
             recording_time = self.record_time               
@@ -29,7 +30,9 @@ class Record:
                         self.audio.clear()
                     time.sleep(0.01)
         except KeyboardInterrupt:
-            pass
+            with wave.open(self.path + "output.wav", 'w') as f:
+                f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
+                f.writeframes(struct.pack('h' * len(self.audio), *self.audio))
         finally:
             self.recorder.stop()
             self.recorder.delete()

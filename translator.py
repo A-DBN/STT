@@ -1,10 +1,24 @@
 import re
+import speech_recognition as sr
 
 class Translator:
-    def __init__(self, path, audio):
+    def __init__(self, path, audio, language):
+        self.recognizer = sr.Recognizer()
         self.audio = audio
         self.words = []
+        self.language = language
         self.set_words(path)
+
+    def set_audio(self):
+        try:
+            file = sr.AudioFile(self.audio)
+            with file as source:
+                record = self.recognizer.record(source)
+                print(self.recognizer.recognize_google(record, language=self.language))
+
+        except Exception as err:
+            print(f"Something went wrong when getting the audio: {str(err)}")
+            #raise Exception("File doest not exist or is empty !")
 
     def set_words(self, path):
         try:
